@@ -1,368 +1,176 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Trade AI - منصة التداول بالذكاء الاصطناعي</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
-body {
-font-family: 'Cairo', sans-serif;
-background-color: #0b0e11;
-color: #eaecef;
-user-select: none;
-}
-.bg-card { background-color: #181a20; }
-.bg-card-hover:hover { background-color: #2b313a; }
-.border-custom { border-color: #2b313a; }
-.green-glow { text-shadow: 0 0 12px rgba(14, 203, 129, 0.6); }
-.red-glow { text-shadow: 0 0 12px rgba(246, 70, 93, 0.6); }
-​/* Custom scrollbars */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #0b0e11; }
-::-webkit-scrollbar-thumb { background: #2b313a; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #474d57; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Trade AI - منصة التداول الآلي بالذكاء الاصطناعي</title>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 15px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #161b22;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .wallet {
+            background: #21262d;
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: #3fb950;
+            font-weight: bold;
+        }
+        .crypto-card, .chart-section {
+            background: #161b22;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #30363d;
+        }
+        .crypto-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .crypto-card:hover {
+            border-color: #58a6ff;
+        }
+        .timeframes {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .tf-btn {
+            background: #21262d;
+            color: #c9d1d9;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .tf-btn.active {
+            background: #238636;
+            color: white;
+        }
+        .trade-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .trade-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .buy-btn {
+            background-color: #238636;
+            color: white;
+        }
+        .sell-btn {
+            background-color: #da3633;
+            color: white;
+        }
+    </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between">
-​<!-- Header -->
-<header class="bg-card border-b border-custom px-4 py-3 flex justify-between items-center sticky top-0 z-50 shadow-md">
-<div class="flex items-center space-x-3 space-x-reverse">
-<div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center text-xl font-bold text-black shadow-lg">
-<i class="fa-solid fa-robot"></i>
-</div>
-<div>
-<h1 class="text-lg font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">Smart Trade AI</h1>
-<p class="text-xs text-gray-400">منصة التداول الآلي بالذكاء الاصطناعي</p>
-</div>
-</div>
-​<div class="flex items-center space-x-4 space-x-reverse bg-slate-900/80 px-3 py-1.5 rounded-lg border border-custom">
-<i class="fa-solid fa-wallet text-emerald-400"></i>
-<div>
-<span class="text-xs text-gray-400 block">رصيد المحفظة</span>
-<span id="user-balance" class="font-bold text-emerald-400 text-sm md:text-base">$10,000.00</span>
-</div>
-</div>
-</header>
-​<!-- Main Content -->
-<main class="p-3 md:p-6 space-y-4 max-w-7xl mx-auto w-full">
-​<!-- Crypto Tickers -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-<div id="card-btc" class="bg-card border-2 border-emerald-500/50 p-3 rounded-xl cursor-pointer bg-card-hover transition shadow-sm" onclick="selectPair('BTC/USDT', 64250.50, 'card-btc')">
-<div class="flex justify-between items-center text-xs text-gray-400 mb-1">
-<span class="font-bold text-white">BTC / USDT</span>
-<span class="text-emerald-400 font-bold">+2.45%</span>
-</div>
-<div class="text-base font-extrabold text-white" id="ticker-btc">$64,250.50</div>
-</div>
-​<div id="card-eth" class="bg-card border border-custom p-3 rounded-xl cursor-pointer bg-card-hover transition shadow-sm" onclick="selectPair('ETH/USDT', 3480.20, 'card-eth')">
-<div class="flex justify-between items-center text-xs text-gray-400 mb-1">
-<span class="font-bold text-white">ETH / USDT</span>
-<span class="text-emerald-400 font-bold">+1.82%</span>
-</div>
-<div class="text-base font-extrabold text-white" id="ticker-eth">$3,480.20</div>
-</div>
-​<div id="card-sol" class="bg-card border border-custom p-3 rounded-xl cursor-pointer bg-card-hover transition shadow-sm" onclick="selectPair('SOL/USDT', 145.80, 'card-sol')">
-<div class="flex justify-between items-center text-xs text-gray-400 mb-1">
-<span class="font-bold text-white">SOL / USDT</span>
-<span class="text-rose-500 font-bold">-0.95%</span>
-</div>
-<div class="text-base font-extrabold text-white" id="ticker-sol">$145.80</div>
-</div>
-​<div id="card-bnb" class="bg-card border border-custom p-3 rounded-xl cursor-pointer bg-card-hover transition shadow-sm" onclick="selectPair('BNB/USDT', 580.10, 'card-bnb')">
-<div class="flex justify-between items-center text-xs text-gray-400 mb-1">
-<span class="font-bold text-white">BNB / USDT</span>
-<span class="text-emerald-400 font-bold">+3.10%</span>
-</div>
-<div class="text-base font-extrabold text-white" id="ticker-bnb">$580.10</div>
-</div>
-</div>
-​<!-- Chart & AI Section Grid -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-​<!-- Live Chart (2 cols) -->
-<div class="lg:col-span-2 bg-card border border-custom rounded-xl p-4 flex flex-col justify-between shadow-lg">
-<div class="flex justify-between items-center mb-4">
-<div>
-<h2 id="current-pair" class="text-xl font-bold text-white flex items-center gap-2">
-<span>BTC/USDT</span>
-<span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold">مباشر</span>
-</h2>
-<span id="current-price" class="text-2xl font-black text-emerald-400 mt-1 block">$64,250.50</span>
-</div>
-<div class="flex space-x-1 space-x-reverse text-xs">
-<button class="px-3 py-1 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">1M</button>
-<button class="px-3 py-1 rounded bg-slate-800 text-gray-400 hover:text-white">15M</button>
-<button class="px-3 py-1 rounded bg-slate-800 text-gray-400 hover:text-white">1H</button>
-<button class="px-3 py-1 rounded bg-slate-800 text-gray-400 hover:text-white">1D</button>
-</div>
-</div>
-​<!-- Canvas Chart -->
-<div class="relative w-full h-64 md:h-80">
-<canvas id="tradingChart"></canvas>
-</div>
-</div>
-​<!-- AI Signal & Trade Panel (1 col) -->
-<div class="space-y-4 flex flex-col justify-between">
-​<!-- AI Signal Card -->
-<div class="bg-card border border-custom rounded-xl p-4 relative overflow-hidden shadow-lg">
-<div class="absolute -left-6 -top-6 w-24 h-24 bg-purple-500/10 rounded-full blur-xl pointer-events-none"></div>
-​<div class="flex justify-between items-center mb-3">
-<span class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-<i class="fa-solid fa-brain text-purple-400"></i> إشارة الذكاء الاصطناعي
-</span>
-<span class="text-xs bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full border border-purple-500/30 font-semibold">AI v4.2 Pro</span>
-</div>
-​<div class="bg-slate-900/90 p-3 rounded-lg border border-custom mb-3 text-center">
-<span id="ai-recommendation" class="text-base md:text-lg font-black text-emerald-400 block green-glow">توصية: شراء قوية (STRONG BUY)</span>
-<span id="ai-confidence" class="text-xs text-gray-400 mt-1 block">نسبة الدقة والتأكيد: <strong class="text-white">94.8%</strong></span>
-</div>
-​<div class="grid grid-cols-2 gap-2 text-xs mb-3">
-<div class="bg-slate-800/50 p-2 rounded-lg border border-custom">
-<span class="text-gray-400 block mb-0.5">هدف الربح (TP)</span>
-<span id="ai-tp" class="text-emerald-400 font-bold text-sm">$66,800.00</span>
-</div>
-<div class="bg-slate-800/50 p-2 rounded-lg border border-custom">
-<span class="text-gray-400 block mb-0.5">وقف الخسارة (SL)</span>
-<span id="ai-sl" class="text-rose-400 font-bold text-sm">$62,900.00</span>
-</div>
-</div>
-​<button onclick="generateAISignal()" class="w-full py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-lg font-bold text-xs flex items-center justify-center gap-2 transition shadow-lg">
-<i class="fa-solid fa-arrows-rotate"></i> إعادة تحليل السوق بالذكاء الاصطناعي
-</button>
-</div>
-​<!-- Quick Trade Form -->
-<div class="bg-card border border-custom rounded-xl p-4 shadow-lg">
-<h3 class="text-sm font-bold text-gray-300 mb-3 flex items-center gap-2">
-<i class="fa-solid fa-bolt text-yellow-400"></i> تنفيذ صفقة سريعة
-</h3>
-​<div class="space-y-3">
-<div>
-<label class="text-xs text-gray-400 block mb-1">مبلغ الاستثمار ($)</label>
-<input type="number" id="trade-amount" value="500" min="10" step="10" class="w-full bg-slate-900 border border-custom rounded-lg px-3 py-2 text-white font-bold focus:outline-none focus:border-emerald-500 text-sm">
-<p id="trade-error" class="text-xs text-rose-500 mt-1 hidden font-semibold"></p>
-</div>
-​<div class="grid grid-cols-2 gap-3">
-<button onclick="executeTrade('BUY')" class="py-2.5 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-black font-black rounded-lg shadow-lg shadow-emerald-500/20 transition flex items-center justify-center gap-2">
-<i class="fa-solid fa-arrow-trend-up"></i> شراء (LONG)
-</button>
-<button onclick="executeTrade('SELL')" class="py-2.5 bg-rose-500 hover:bg-rose-600 active:scale-95 text-white font-black rounded-lg shadow-lg shadow-rose-500/20 transition flex items-center justify-center gap-2">
-<i class="fa-solid fa-arrow-trend-down"></i> بيع (SHORT)
-</button>
-</div>
-</div>
-</div>
-​</div>
-</div>
-​<!-- Open Trades Table -->
-<div class="bg-card border border-custom rounded-xl p-4 shadow-lg">
-<h3 class="text-sm font-bold text-gray-300 mb-3 flex items-center gap-2">
-<i class="fa-solid fa-list-check text-cyan-400"></i> الصفقات المفتوحة وسجل الأرباح
-</h3>
-​<div class="overflow-x-auto">
-<table class="w-full text-right text-xs">
-<thead>
-<tr class="text-gray-400 border-b border-custom">
-<th class="pb-2">الزوج</th>
-<th class="pb-2">النوع</th>
-<th class="pb-2">المبلغ</th>
-<th class="pb-2">سعر الدخول</th>
-<th class="pb-2">الربح / الخسارة</th>
-<th class="pb-2 text-center">الإجراء</th>
-</tr>
-</thead>
-<tbody id="trades-list" class="divide-y divide-custom">
-<tr class="text-gray-400 text-center py-4">
-<td colspan="6" class="py-6 text-gray-500">لا توجد صفقات مفتوحة حالياً، اختر زوجاً ونفذ صفقتك الأولى!</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-​</main>
-​<!-- Footer -->
-<footer class="bg-card border-t border-custom px-4 py-3 text-center text-xs text-gray-500">
-تطبيق محاكاة التداول بالذكاء الاصطناعي Smart Trade AI © 2026 - جميع الحقوق محفوظة
-</footer>
-​<!-- JavaScript Logic -->
-<script>
-let balance = 10000.00;
-let activePair = 'BTC/USDT';
-let activePrice = 64250.50;
-let chart;
-let trades = [];
-​// Prices for available pairs
-const marketPrices = {
-'BTC/USDT': 64250.50,
-'ETH/USDT': 3480.20,
-'SOL/USDT': 145.80,
-'BNB/USDT': 580.10
-};
-​// Initialize Chart
-function initChart() {
-const ctx = document.getElementById('tradingChart').getContext('2d');
-const initialData = Array.from({length: 25}, (_, i) => activePrice + (Math.random() * (activePrice * 0.005) - (activePrice * 0.0025)));
-​chart = new Chart(ctx, {
-type: 'line',
-data: {
-labels: Array.from({length: 25}, (_, i) => ${i + 1}m),
-datasets: [{
-label: activePair,
-data: initialData,
-borderColor: '#0ecb81',
-backgroundColor: 'rgba(14, 203, 129, 0.08)',
-fill: true,
-tension: 0.35,
-borderWidth: 2,
-pointRadius: 0
-}]
-},
-options: {
-responsive: true,
-maintainAspectRatio: false,
-animation: { duration: 300 },
-plugins: { legend: { display: false } },
-scales: {
-x: { grid: { color: '#2b313a' }, ticks: { color: '#848e9c', font: { size: 10 } } },
-y: { grid: { color: '#2b313a' }, ticks: { color: '#848e9c', font: { size: 10 } } }
-}
-}
-});
-​// Live Price Updates Loop
-setInterval(() => {
-// Update all pairs slightly
-for (let pair in marketPrices) {
-const variation = (Math.random() * 0.004 - 0.0019);
-marketPrices[pair] = parseFloat((marketPrices[pair] * (1 + variation)).toFixed(2));
-}
-​// Update active price
-activePrice = marketPrices[activePair];
-​// Update DOM elements
-document.getElementById('current-price').innerText = $${activePrice.toLocaleString(undefined, {minimumFractionDigits: 2})};
-​// Update specific ticker boxes
-if (document.getElementById('ticker-btc')) document.getElementById('ticker-btc').innerText = $${marketPrices['BTC/USDT'].toLocaleString()};
-if (document.getElementById('ticker-eth')) document.getElementById('ticker-eth').innerText = $${marketPrices['ETH/USDT'].toLocaleString()};
-if (document.getElementById('ticker-sol')) document.getElementById('ticker-sol').innerText = $${marketPrices['SOL/USDT'].toLocaleString()};
-if (document.getElementById('ticker-bnb')) document.getElementById('ticker-bnb').innerText = $${marketPrices['BNB/USDT'].toLocaleString()};
-​// Update chart
-chart.data.datasets[0].data.shift();
-chart.data.datasets[0].data.push(activePrice);
-chart.update();
-​updateTradesPNL();
-}, 1800);
-}
-​// Select Currency Pair
-function selectPair(pair, price, cardId) {
-activePair = pair;
-activePrice = marketPrices[pair] || price;
-​// Highlight active card
-['card-btc', 'card-eth', 'card-sol', 'card-bnb'].forEach(id => {
-const card = document.getElementById(id);
-if (card) {
-card.classList.remove('border-2', 'border-emerald-500/50');
-card.classList.add('border', 'border-custom');
-}
-});
-const activeCard = document.getElementById(cardId);
-if (activeCard) {
-activeCard.classList.remove('border-custom');
-activeCard.classList.add('border-2', 'border-emerald-500/50');
-}
-​document.getElementById('current-pair').children[0].innerText = pair;
-document.getElementById('current-price').innerText = $${activePrice.toLocaleString(undefined, {minimumFractionDigits: 2})};
-chart.data.datasets[0].label = pair;
-generateAISignal();
-}
-​// Generate AI Signal
-function generateAISignal() {
-const types = ['شراء قوية (STRONG BUY)', 'بيع سريعة (SHORT SELL)', 'انتظار ومراقبة (NEUTRAL)'];
-const randomType = types[Math.floor(Math.random() * types.length)];
-const confidence = (Math.random() * 12 + 86).toFixed(1);
-​const tp = (activePrice * (1 + (Math.random() * 0.035 + 0.015))).toFixed(2);
-const sl = (activePrice * (1 - (Math.random() * 0.025 + 0.010))).toFixed(2);
-​const recEl = document.getElementById('ai-recommendation');
-recEl.innerText = توصية: ${randomType};
-​if (randomType.includes('شراء')) {
-recEl.className = "text-base md:text-lg font-black text-emerald-400 block green-glow";
-} else if (randomType.includes('بيع')) {
-recEl.className = "text-base md:text-lg font-black text-rose-500 block red-glow";
-} else {
-recEl.className = "text-base md:text-lg font-black text-yellow-400 block";
-}
-​document.getElementById('ai-confidence').innerHTML = نسبة الدقة والتأكيد: <strong class="text-white">${confidence}%</strong>;
-document.getElementById('ai-tp').innerText = $${parseFloat(tp).toLocaleString()};
-document.getElementById('ai-sl').innerText = $${parseFloat(sl).toLocaleString()};
-}
-​// Execute Trade
-function executeTrade(type) {
-const amountInput = document.getElementById('trade-amount');
-const errorEl = document.getElementById('trade-error');
-const amount = parseFloat(amountInput.value);
-​errorEl.classList.add('hidden');
-​if (isNaN(amount) || amount <= 0) {
-errorEl.innerText = 'يرجى إدخال مبلغ استثمار صحيح!';
-errorEl.classList.remove('hidden');
-return;
-}
-​if (amount > balance) {
-errorEl.innerText = 'المبلغ يتجاوز رصيد المحفظة المتاح!';
-errorEl.classList.remove('hidden');
-return;
-}
-​balance -= amount;
-document.getElementById('user-balance').innerText = $${balance.toLocaleString(undefined, {minimumFractionDigits: 2})};
-​const trade = {
-id: Date.now(),
-pair: activePair,
-type: type,
-amount: amount,
-entryPrice: activePrice,
-pnl: 0
-};
-​trades.push(trade);
-renderTrades();
-}
-​// Update PNL for Active Trades
-function updateTradesPNL() {
-trades.forEach(trade => {
-const currentPrice = marketPrices[trade.pair] || activePrice;
-const diff = currentPrice - trade.entryPrice;
-const percent = diff / trade.entryPrice;
-trade.pnl = trade.type === 'BUY' ? trade.amount * percent : trade.amount * (-percent);
-});
-renderTrades();
-}
-​// Render Trades Table
-function renderTrades() {
-const list = document.getElementById('trades-list');
-if (trades.length === 0) {
-list.innerHTML = <tr class="text-gray-400 text-center"><td colspan="6" class="py-6 text-gray-500">لا توجد صفقات مفتوحة حالياً، اختر زوجاً ونفذ صفقتك الأولى!</td></tr>;
-return;
-}
-​list.innerHTML = trades.map(trade => {
-const pnlClass = trade.pnl >= 0 ? 'text-emerald-400' : 'text-rose-500';
-const typeClass = trade.type === 'BUY' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border-rose-500/30';
-​return <tr class="border-b border-custom"> <td class="py-3 font-bold text-white">${trade.pair}</td> <td class="py-3"><span class="px-2 py-0.5 rounded text-xs border font-semibold ${typeClass}">${trade.type === 'BUY' ? 'شراء LONG' : 'بيع SHORT'}</span></td> <td class="py-3 font-bold text-gray-200">$${trade.amount.toFixed(2)}</td> <td class="py-3 text-gray-300">$${trade.entryPrice.toLocaleString(undefined, {minimumFractionDigits: 2})}</td> <td class="py-3 font-black ${pnlClass}">${trade.pnl >= 0 ? '+' : ''}$${trade.pnl.toFixed(2)}</td> <td class="py-3 text-center"> <button onclick="closeTrade(${trade.id})" class="px-3 py-1 bg-slate-800 hover:bg-rose-600 text-white rounded-lg text-xs font-semibold border border-custom transition">إغلاق الصفقة</button> </td> </tr>;
-}).join('');
-}
-​// Close Trade
-function closeTrade(id) {
-const index = trades.findIndex(t => t.id === id);
-if (index !== -1) {
-const trade = trades[index];
-balance += (trade.amount + trade.pnl);
-document.getElementById('user-balance').innerText = $${balance.toLocaleString(undefined, {minimumFractionDigits: 2})};
-trades.splice(index, 1);
-renderTrades();
-}
-}
-​// Start Application
-window.onload = () => {
-initChart();
-generateAISignal();
-};
-</script>
+<body>
+
+    <div class="header">
+        <div>
+            <h3 style="margin: 0; color: #fff;">Smart Trade AI</h3>
+            <span style="font-size: 12px; color: #8b949e;">منصة التداول الآلي بالذكاء الاصطناعي</span>
+        </div>
+        <div class="wallet">
+            رصيد المحفظة: $<span id="walletBalance">10,000.00</span>
+        </div>
+    </div>
+
+    <!-- قائمة العملات -->
+    <div class="crypto-card" onclick="selectCrypto('BTC / USDT', 64250.50)">
+        <div>
+            <span style="color: #3fb950; font-size: 14px;">+2.45%</span>
+            <h4 style="margin: 5px 0 0 0; color: #fff;">BTC / USDT</h4>
+        </div>
+        <span style="font-size: 18px; font-weight: bold; color: #fff;">$64,250.50</span>
+    </div>
+
+    <div class="crypto-card" onclick="selectCrypto('ETH / USDT', 3480.20)">
+        <div>
+            <span style="color: #3fb950; font-size: 14px;">+1.82%</span>
+            <h4 style="margin: 5px 0 0 0; color: #fff;">ETH / USDT</h4>
+        </div>
+        <span style="font-size: 18px; font-weight: bold; color: #fff;">$3,480.20</span>
+    </div>
+
+    <!-- قسم الشارت والتداول -->
+    <div class="chart-section">
+        <div class="timeframes">
+            <button class="tf-btn" onclick="setTf(this)">1D</button>
+            <button class="tf-btn" onclick="setTf(this)">1H</button>
+            <button class="tf-btn" onclick="setTf(this)">15M</button>
+            <button class="tf-btn active" onclick="setTf(this)">1M</button>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h4 id="selectedPair" style="margin: 0; color: #fff;">BTC / USDT</h4>
+            <span style="color: #3fb950; font-weight: bold;" id="selectedPrice">$64,250.50</span>
+        </div>
+
+        <div style="height: 120px; display: flex; align-items: center; justify-content: center; color: #8b949e; border: 1px dashed #30363d; margin-top: 10px; border-radius: 6px;">
+            [ الرسم البياني التفاعلي للأسعار ]
+        </div>
+
+        <!-- أزرار البيع والشراء الجديدة -->
+        <div class="trade-buttons">
+            <button class="trade-btn buy-btn" onclick="executeTrade('BUY')">شراء (BUY)</button>
+            <button class="trade-btn sell-btn" onclick="executeTrade('SELL')">بيع (SELL)</button>
+        </div>
+    </div>
+
+    <script>
+        let balance = 10000.00;
+        let currentPrice = 64250.50;
+        let currentPairName = "BTC / USDT";
+
+        function selectCrypto(pair, price) {
+            currentPairName = pair;
+            currentPrice = price;
+            document.getElementById('selectedPair').innerText = pair;
+            document.getElementById('selectedPrice').innerText = '$' + price.toLocaleString();
+        }
+
+        function setTf(btn) {
+            document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function executeTrade(type) {
+            if (type === 'BUY') {
+                if (balance >= currentPrice) {
+                    balance -= currentPrice;
+                    alert('تم تنفيذ صفقة شراء بنجاح على ' + currentPairName);
+                } else {
+                    alert('رصيد المحفظة غير كافٍ لإتمام الشراء!');
+                }
+            } else {
+                balance += currentPrice;
+                alert('تم تنفيذ صفقة بيع بنجاح على ' + currentPairName);
+            }
+            document.getElementById('walletBalance').innerText = balance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+    </script>
 </body>
 </html>
